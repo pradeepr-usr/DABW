@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+env/
+venv/
+.dawb_env/
+*.log
+.env
+
+# Node/Frontend
+node_modules/
+dist/
+.env
+
+# Images, temp files
+dbflow.jpg
