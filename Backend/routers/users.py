@@ -2,6 +2,6 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
-@router.get("/patients")
-def get_patients():
-    return {"message": "List of patients"}
+@router.get("/")
+def read_users_root():
+    return {"message": "Users router is working"}   

@@ -2,6 +2,16 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
+# Authentication Schemas
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    refresh_token: str
+
+
+class TokenRefreshRequest(BaseModel):
+    refresh_token: str
+
 # User Schemas
 class UserBase(BaseModel):
     username: str
