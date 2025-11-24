@@ -6,3 +6,5 @@ databases
 psycopg2-binary
 pydantic
 python-dotenv
+email-validator
+passlib[bcrypt]

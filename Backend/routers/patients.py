@@ -1,7 +1,14 @@
 from fastapi import APIRouter
+from services.patient_service import get_patient  # Import the function
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from core.database import get_db
+from core.schemas import PatientRead 
+
 
 router = APIRouter()
 
-@router.get("/patients")
-def get_patients():
-    return {"message": "List of patients"}
+@router.get("/patients", response_model=list[PatientRead])  # Use your schema for proper docs/validation
+def get_all_patients(db: Session = Depends(get_db)):
+    patients = get_patient(db)
+    return patients
