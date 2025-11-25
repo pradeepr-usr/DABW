@@ -10,6 +10,7 @@ import os
 
 # Load environment variables from .env file
 load_dotenv()
+
 # JWT configuration from environment variables
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
