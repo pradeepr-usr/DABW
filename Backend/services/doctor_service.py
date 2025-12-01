@@ -13,9 +13,17 @@ def get_doctors(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Doctor).offset(skip).limit(limit).all()
 
 def create_doctor(db: Session, doctor: DoctorCreate):
-    db_doctor = Doctor(**doctor.dict())
+    db_doctor = Doctor(
+        user_id=doctor.user_id,
+        specialization_id=doctor.specialization_id,
+        first_name=doctor.first_name,
+        last_name=doctor.last_name,
+        qualification=doctor.qualification,
+        hospital_affiliation=doctor.hospital_affiliation,
+        phone=doctor.phone,
+        address=doctor.address
+    )
     db.add(db_doctor)
     db.commit()
     db.refresh(db_doctor)
     return db_doctor
-

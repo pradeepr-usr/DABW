@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 from fastapi.security import OAuth2PasswordRequestForm
 from core.database import get_db
 from services.auth_service import (
-    create_user, authenticate_user,
+    create_user, create_patient, authenticate_user,
     create_access_token, create_refresh_token, decode_token
 )
-from core.schemas import UserCreate, UserRead, Token, TokenRefreshRequest
+from core.schemas import UserCreate,PatientCreate, UserRead, Token, TokenRefreshRequest
 
 
 router = APIRouter()
@@ -16,8 +16,12 @@ def read_auth_root():
     return {"message": "Auth router is working"}
 
 @router.post("/register", response_model=UserRead)
-def register(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = create_user(db, user)
+def register(user: UserCreate, patient: PatientCreate, db: Session = Depends(get_db)):
+    # Set role to patient by default
+    db_user = create_user(db, user, role="patient")
+    # Link patient to user
+    patient.user_id = db_user.id
+    create_patient(db, patient)
     return db_user
 
 

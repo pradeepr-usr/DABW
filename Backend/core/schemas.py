@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, Annotated
 from datetime import datetime
 
 # Authentication Schemas
@@ -16,15 +16,16 @@ class TokenRefreshRequest(BaseModel):
 class UserBase(BaseModel):
     username: str
     email: EmailStr
-    role: str
+    # role: str
 
 class UserCreate(UserBase):
-    password: str
+    password: Annotated[str, Field(min_length=8, max_length=72)]
 
 class UserRead(UserBase):
     id: int
     created_at: datetime
-
+    role: str
+    
     model_config = {
         "from_attributes": True
     }
@@ -39,7 +40,7 @@ class PatientBase(BaseModel):
     address: Optional[str]
 
 class PatientCreate(PatientBase):
-    user_id: int
+    user_id: Optional[int] = None
 
 class PatientRead(PatientBase):
     id: int
@@ -62,7 +63,8 @@ class DoctorBase(BaseModel):
 
 
 class DoctorCreate(DoctorBase):
-    pass
+    user_id: Optional[int] = None
+
 
 class DoctorRead(DoctorBase):
     id: int

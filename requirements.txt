@@ -7,6 +7,6 @@ psycopg2-binary
 pydantic
 python-dotenv
 email-validator
-passlib[bcrypt]
+bcrypt==4.0.1
 pyJWT
 python-multipart

@@ -2,8 +2,8 @@ import jwt
 from datetime import datetime, timedelta
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from core.models import User
-from core.schemas import UserCreate
+from core.models import User, Patient
+from core.schemas import UserCreate, PatientCreate
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 import os
@@ -35,19 +35,40 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 # User creation with hashed password
-def create_user(db: Session, user: UserCreate):
+def create_user(db: Session, user: UserCreate, role: str = "patient"):
+    # Check if username or email already exists
+    if get_user_by_username(db, user.username) or get_user_by_email(db, user.email):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username or email already exists")
+    # Ensure password is not longer than 72 bytes
+    if len(user.password.encode('utf-8')) > 72:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password too long")
     hashed_password = pwd_context.hash(user.password)
     db_user = User(
         username=user.username,
         email=user.email,
         password_hash=hashed_password,
-        role=user.role,
+        role=role,
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+# Patient creation
+def create_patient(db: Session, patient: PatientCreate):
+    db_patient = Patient(
+        user_id=patient.user_id,
+        first_name=patient.first_name,
+        last_name=patient.last_name,
+        dob=patient.dob,
+        gender=patient.gender,
+        phone=patient.phone,
+        address=patient.address,
+    )
+    db.add(db_patient)
+    db.commit()
+    db.refresh(db_patient)
+    return db_patient
 
 # Authenticate user credentials
 def authenticate_user(db: Session, username: str, password: str):
