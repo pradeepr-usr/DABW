@@ -9,6 +9,7 @@ from services.auth_service import (
 from core.schemas import UserCreate,PatientCreate, UserRead, Token, TokenRefreshRequest
 
 
+
 router = APIRouter()
 
 @router.get("/")

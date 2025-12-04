@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import auth, users, doctors, patients, appointments  # Import your route modules here
+from routers import auth, users, doctors, patients, appointments, specialization  # Import your route modules here
 from core.database import engine, Base
 from core.create_db_and_user import create_database_and_user
 
@@ -17,6 +17,7 @@ app.include_router(users.router, prefix="/users", tags=["Users"])
 app.include_router(doctors.router, prefix="/doctors", tags=["Doctors"])
 app.include_router(patients.router, prefix="/patients", tags=["Patients"])
 app.include_router(appointments.router, prefix="/appointments", tags=["Appointments"])
+app.include_router(specialization.router, prefix="/specializations", tags=["Specializations"])
 
 @app.get("/")
 def read_root():

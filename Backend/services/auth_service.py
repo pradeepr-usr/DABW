@@ -15,10 +15,16 @@ load_dotenv()
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
-REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))      
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))   
+
+if not SECRET_KEY:
+    raise RuntimeError("JWT_SECRET_KEY is not set in environment (.env)")
+   
 
 # Password hashing setup using bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# ---------------- User retrieval ----------------
 
 # User retrieval functions
 def get_user_by_username(db: Session, username: str):
@@ -28,11 +34,13 @@ def get_user_by_username(db: Session, username: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
+# ---------------- Password utils ----------------
 
 # Password hashing and verification
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
+# ---------------- User / Patient creation ----------------
 
 # User creation with hashed password
 def create_user(db: Session, user: UserCreate, role: str = "patient"):
@@ -70,6 +78,9 @@ def create_patient(db: Session, patient: PatientCreate):
     db.refresh(db_patient)
     return db_patient
 
+
+# ---------------- Authentication ----------------
+
 # Authenticate user credentials
 def authenticate_user(db: Session, username: str, password: str):
     user = get_user_by_username(db, username)
@@ -79,6 +90,7 @@ def authenticate_user(db: Session, username: str, password: str):
         return None
     return user
 
+# ---------------- JWT helpers ----------------
 
 # Create JWT access token
 def create_access_token(data: dict):
